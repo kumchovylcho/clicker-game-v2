@@ -1,13 +1,15 @@
-import pygame
+import pygame as pg
 from button import Button
+from helpers import get_screen_size
 
-pygame.init()
+pg.init()
 
-width = 900
-height = 800
-screen = pygame.display.set_mode((width, height))
-gameOn = True
-background = pygame.image.load("images/menu/start_screen.jpg")
+pg.mouse.set_visible(False)
+
+screen = pg.display.set_mode(get_screen_size())
+
+background = pg.image.load("images/menu/start_screen.jpg").convert_alpha()
+cursor = pg.image.load("images/cursor/cursor.png").convert_alpha()
 
 
 quit_button = Button((100, 40, 0), (180, 180, 180), (350, 400, 220, 70))
@@ -15,17 +17,20 @@ quit_button.default_button_construction("Quit", "Georgia", 50, (255, 255, 255), 
 settings_button = Button((100, 40, 0), (180, 180, 180), (350, 250, 220, 70))
 settings_button.default_button_construction("Settings", "Georgia", 50, (255, 255, 255), True, True)
 
-
-while gameOn:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            gameOn = False
+game_running = True
+while game_running:
+    for event in pg.event.get():
+        if event.type == pg.QUIT:
+            game_running = False
 
     screen.blit(background, (0, 0))
 
-    mouse_position = pygame.mouse.get_pos()
+    mouse_position = pg.mouse.get_pos()
 
     settings_button.if_the_courser_is_above_the_button(mouse_position, screen)
     quit_button.if_the_courser_is_above_the_button(mouse_position, screen)
 
-    pygame.display.update()
+    screen.blit(cursor, mouse_position)
+    pg.display.update()
+
+pg.quit()
