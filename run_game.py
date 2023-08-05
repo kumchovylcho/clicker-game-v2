@@ -24,11 +24,6 @@ sound_on = pg.image.load("images/sound/sound_on.png").convert_alpha()
 sound_off = pg.image.load("images/sound/sound_off.png").convert_alpha()
 sound_button = Sound(800, 700, sound_on, sound_off)
 
-pg.mixer.music.load('music/sound_of_menu/sound_for_menu.mp3')
-pg.mixer.music.play()
-pg.mixer.music.set_volume(settings.GAME_SOUND)
-
-
 coin_images = [pg.image.load(f"images/coins/coin_{i}.png").convert_alpha() for i in range(10)]
 coin_looper = CoinRotater(coin_x=10,
                           coin_y=10,
