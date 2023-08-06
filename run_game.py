@@ -4,6 +4,7 @@ from coin_looper import CoinRotater
 from helpers import get_screen_size
 import settings
 from sound import Sound
+from map_handler.maps_controller import MapsController
 
 pg.init()
 
@@ -29,6 +30,9 @@ coin_looper = CoinRotater(coin_x=10,
                           coin_y=10,
                           images=coin_images
                           )
+
+maps_handler = MapsController()
+maps_handler.add_maps()
 
 game_running = True
 while game_running:
