@@ -17,6 +17,9 @@ clock = pg.time.Clock()
 background = pg.image.load("images/menu/start_screen.jpg").convert_alpha()
 cursor = pg.image.load("images/cursor/cursor.png").convert_alpha()
 
+pg.display.set_icon(cursor)
+pg.display.set_caption("Clicker Forever")
+
 quit_button = Button((100, 40, 0), (180, 180, 180), (350, 400, 220, 70))
 quit_button.default_button_construction("Quit", "Georgia", 50, (255, 255, 255), True, True)
 settings_button = Button((100, 40, 0), (180, 180, 180), (350, 250, 220, 70))
