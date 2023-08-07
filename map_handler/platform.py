@@ -16,7 +16,7 @@ class Platform:
         self.monster_y = monster_y
 
     @property
-    def get_platform_position(self):
+    def get_position(self):
         return self.x_pos, self.y_pos
 
     @property
