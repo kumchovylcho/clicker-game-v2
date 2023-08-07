@@ -71,9 +71,6 @@ def get_bridge_to_platforms():
 
 
 def get_platform_positions():
-    """
-    :return: {map_name: Tuple(x, y), ...}
-    """
 
     platform_positions = {
         "desert": {"platform_pos": (500, 500), "monster_pos": (600, 370)},
