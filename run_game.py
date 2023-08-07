@@ -33,6 +33,7 @@ coin_looper = CoinRotater(coin_x=10,
 
 maps_handler = MapsController()
 maps_handler.add_maps()
+maps_handler.set_monsters_initial_health()
 
 game_running = True
 while game_running:
@@ -45,10 +46,12 @@ while game_running:
             left_clicked = pg.mouse.get_pressed()[0]
             if left_clicked:
                 sound_button.turn_off_on()
+
         elif event.type == pg.MOUSEBUTTONUP:
             pass
 
     screen.blit(background, (0, 0))
+    maps_handler.display_map_with_platform_and_monster(screen)
 
     coin_looper.rotate_coin(screen)
 
