@@ -74,6 +74,3 @@ class MapsController:
             monsters_health = maps_with_monsters_health[i]
             for j in range(len(monsters_health)):
                 self.maps[i].monsters[j].health = monsters_health[j]
-
-    def set_platform_positions(self):
-        pass
