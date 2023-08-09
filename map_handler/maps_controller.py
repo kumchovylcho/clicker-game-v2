@@ -20,13 +20,17 @@ class MapsController:
 
     @property
     def get_current_monster(self):
-        return self.get_current_map.monsters[self.get_current_map.current_monster_index]
+        index = self.get_current_map.current_monster_index
+        return self.get_current_map.monsters[index]
 
     def display_map_with_platform_and_monster(self, screen):
         screen.blits(blit_sequence=((self.get_current_map.background_img, (0, 0)),
                                     (self.get_platform.img, self.get_platform.get_position),
-                                    (self.get_current_monster.image, self.get_platform.get_monster_position),
+                                    (self.get_current_monster.image, self.get_current_monster.monster_pos),
                                     ))
+
+        self.get_current_monster.health_bar_pad.draw(screen)
+        self.get_current_monster.health_bar.draw(screen)
 
     @staticmethod
     def generate_initial_monsters_health():
@@ -51,14 +55,11 @@ class MapsController:
         platform_positions = helpers.get_platform_positions()
 
         for map_name, map_bg in zip(map_names, map_backgrounds):
-            platform_x, platform_y = platform_positions[map_name]["platform_pos"]
-            monster_x, monster_y = platform_positions[map_name]["monster_pos"]
+            platform_x, platform_y = platform_positions[map_name]
 
             new_platform = Platform(img=bridge_to_platform[map_name],
                                     x_pos=platform_x,
                                     y_pos=platform_y,
-                                    monster_x=monster_x,
-                                    monster_y=monster_y
                                     )
             new_map = Map(background_img=map_bg,
                           platform=new_platform
@@ -74,3 +75,4 @@ class MapsController:
             monsters_health = maps_with_monsters_health[i]
             for j in range(len(monsters_health)):
                 self.maps[i].monsters[j].health = monsters_health[j]
+                self.maps[i].monsters[j].set_max_health(monsters_health[j])
