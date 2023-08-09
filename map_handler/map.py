@@ -13,7 +13,18 @@ class Map:
         self.platform = platform
         self.current_monster_index = 0
 
+    @property
+    def is_last_monster(self):
+        return self.current_monster_index == len(self.monsters) - 1
+
     def add_monsters(self, monsters: Sequence[Monster]):
         for monster in monsters:
             self.monsters.append(monster)
+
+    def spawn_next_monster(self):
+        if not self.is_last_monster:
+            self.current_monster_index += 1
+
+        elif self.is_last_monster:
+            self.current_monster_index = 0
 
