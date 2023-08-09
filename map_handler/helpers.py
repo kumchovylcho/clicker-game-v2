@@ -8,6 +8,8 @@ def get_monsters_on_chosen_map(map_name: str):
     """
     :return: list of monster objects for the given map
     """
+    monster_positions = get_monster_positions()
+
     monsters = []
     directory_path = 'images/monsters'
     for map_n in os.listdir(directory_path):
@@ -19,7 +21,10 @@ def get_monsters_on_chosen_map(map_name: str):
             image_path = os.path.join(file_path, file)
             monster_img = pg.image.load(image_path).convert_alpha()
 
-            monsters.append(Monster(monster_img, 0))
+            monsters.append(Monster(image=monster_img,
+                                    health=0,
+                                    x_pos=monster_positions[map_n][0],
+                                    y_pos=monster_positions[map_n][1]))
 
         return monsters
 
@@ -73,13 +78,27 @@ def get_bridge_to_platforms():
 def get_platform_positions():
 
     platform_positions = {
-        "desert": {"platform_pos": (500, 500), "monster_pos": (600, 370)},
-        "hell": {"platform_pos": (500, 300), "monster_pos": (590, 360)},
-        "mountain": {"platform_pos": (470, 300), "monster_pos": (590, 370)},
-        "no_sea_sky": {"platform_pos": (500, 320), "monster_pos": (600, 370)},
-        "rocks": {"platform_pos": (500, 300), "monster_pos": (600, 360)},
-        "sea_sky": {"platform_pos": (500, 450), "monster_pos": (590, 390)},
-        "volcano": {"platform_pos": (470, 300), "monster_pos": (590, 350)},
+        "desert": (500, 500),
+        "hell": (500, 300),
+        "mountain": (470, 300),
+        "no_sea_sky": (500, 320),
+        "rocks": (500, 300),
+        "sea_sky": (500, 450),
+        "volcano": (470, 300),
     }
 
     return platform_positions
+
+
+def get_monster_positions():
+    monster_positions = {
+        "desert": (600, 370),
+        "hell": (590, 360),
+        "mountain": (590, 370),
+        "no_sea_sky": (600, 370),
+        "rocks": (600, 360),
+        "sea_sky": (590, 390),
+        "volcano": (590, 350),
+    }
+
+    return monster_positions
