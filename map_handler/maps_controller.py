@@ -23,15 +23,6 @@ class MapsController:
         index = self.get_current_map.current_monster_index
         return self.get_current_map.monsters[index]
 
-    def display_map_with_platform_and_monster(self, screen):
-        screen.blits(blit_sequence=((self.get_current_map.background_img, (0, 0)),
-                                    (self.get_platform.img, self.get_platform.get_position),
-                                    (self.get_current_monster.image, self.get_current_monster.monster_pos),
-                                    ))
-
-        self.get_current_monster.health_bar_pad.draw(screen)
-        self.get_current_monster.health_bar.draw(screen)
-
     @staticmethod
     def generate_initial_monsters_health():
         initial_health = settings.monster_initial_health
@@ -76,3 +67,28 @@ class MapsController:
             for j in range(len(monsters_health)):
                 self.maps[i].monsters[j].health = monsters_health[j]
                 self.maps[i].monsters[j].set_max_health(monsters_health[j])
+
+    def switch_next_map(self):
+        self.current_map += 1
+
+        if self.current_map >= len(self.maps):
+            self.current_map = 0
+
+    def display_map_with_platform_and_monster(self, screen):
+        screen.blits(blit_sequence=((self.get_current_map.background_img, (0, 0)),
+                                    (self.get_platform.img, self.get_platform.get_position),
+                                    (self.get_current_monster.image, self.get_current_monster.monster_pos),
+                                    ))
+
+        self.get_current_monster.health_bar_pad.draw(screen)
+        self.get_current_monster.health_bar.draw(screen)
+
+    def attack_monster(self):
+        self.get_current_monster.take_damage(2000)
+
+        if self.get_current_map.is_last_monster:
+            self.switch_next_map()
+
+        if self.get_current_monster.is_dead:
+            self.get_current_monster.prepare_for_next_spawn_after_death()
+            self.get_current_map.spawn_next_monster()
