@@ -56,10 +56,8 @@ class Monster:
                                         remove_health=amount)
 
         self.health -= amount
-        if self.is_dead:
-            self.prepare_for_next_spawn_after_death()
 
     def prepare_for_next_spawn_after_death(self):
         self.set_max_health(self.get_new_max_health)
         self.health = self.max_health
-        self.health_bar.width = self.health_bar_width
+        self.health_bar.rect.width = self.health_bar_width
