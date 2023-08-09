@@ -3,7 +3,6 @@ from button import Button
 from coin_looper import CoinRotater
 from helpers import get_screen_size
 import settings
-from menu import Menu
 from sound import Sound
 from map_handler.maps_controller import MapsController
 
@@ -28,8 +27,6 @@ settings_button.default_button_construction("Start", "Georgia", 50, (255, 255, 2
 sound_on = pg.image.load("images/sound/sound_on.png").convert_alpha()
 sound_off = pg.image.load("images/sound/sound_off.png").convert_alpha()
 sound_button = Sound(800, 700, sound_on, sound_off)
-menu = Menu()
-menu.add_buttons(quit_button, settings_button, sound_button)
 
 coin_images = [pg.image.load(f"images/coins/coin_{i}.png").convert_alpha() for i in range(10)]
 coin_looper = CoinRotater(coin_x=10,
