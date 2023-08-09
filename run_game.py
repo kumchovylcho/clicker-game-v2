@@ -53,6 +53,7 @@ while game_running:
             left_clicked = pg.mouse.get_pressed()[0]
             if left_clicked:
                 sound_button.turn_off_on()
+                maps_handler.attack_monster()
 
         elif event.type == pg.MOUSEBUTTONUP:
             pass
