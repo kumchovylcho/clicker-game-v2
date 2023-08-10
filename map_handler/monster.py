@@ -1,5 +1,6 @@
 from pygame import Surface
 
+import helpers
 import settings
 from health_bar import HealthBar
 
@@ -46,6 +47,22 @@ class Monster:
     @property
     def get_new_max_health(self):
         return round(self.max_health * settings.monster_health_scale_value)
+
+    def create_health_surface(self) -> Surface:
+        formatted_health = helpers.numbers_format(self.health)
+        formatted_max_health = helpers.numbers_format(self.max_health)
+        return helpers.create_font(f"{formatted_health}/{formatted_max_health}",
+                                   "Georgia",
+                                   30,
+                                   (0, 0, 0)
+                                   ).convert_alpha()
+
+    def prepare_text_for_display(self) -> tuple:
+        surface = self.create_health_surface()
+        center_x = helpers.calculate_center(self.health_bar_width, surface.get_width()) + self.health_bar.rect.x
+        center_y = helpers.calculate_center(self.health_bar.rect.height, surface.get_height()) + self.health_bar.rect.y
+
+        return surface, (center_x, center_y)
 
     def set_max_health(self, max_health: float):
         self.max_health = max_health
