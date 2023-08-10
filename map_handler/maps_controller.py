@@ -83,10 +83,12 @@ class MapsController:
         self.get_current_monster.health_bar_pad.draw(screen)
         self.get_current_monster.health_bar.draw(screen)
 
-    def attack_monster(self):
-        self.get_current_monster.take_damage(2000)
+        screen.blit(*self.get_current_monster.prepare_text_for_display())
 
-        if self.get_current_map.is_last_monster:
+    def attack_monster(self):
+        self.get_current_monster.take_damage(5)
+
+        if self.get_current_map.is_last_monster and self.get_current_monster.is_dead:
             self.switch_next_map()
 
         if self.get_current_monster.is_dead:
