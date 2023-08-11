@@ -6,7 +6,8 @@ from map_handler.platform import Platform
 
 class MapsController:
 
-    def __init__(self):
+    def __init__(self, player):
+        self.player = player
         self.maps = []
         self.current_map = 0
 
@@ -78,6 +79,7 @@ class MapsController:
         screen.blits(blit_sequence=((self.get_current_map.background_img, (0, 0)),
                                     (self.get_platform.img, self.get_platform.get_position),
                                     (self.get_current_monster.image, self.get_current_monster.monster_pos),
+                                    (self.player.gold_surface, self.player.gold_position),
                                     ))
 
         self.get_current_monster.health_bar_pad.draw(screen)
@@ -86,7 +88,7 @@ class MapsController:
         screen.blit(*self.get_current_monster.prepare_text_for_display())
 
     def attack_monster(self):
-        self.get_current_monster.take_damage(5)
+        self.get_current_monster.take_damage(self.player.click_damage)
 
         if self.get_current_map.is_last_monster and self.get_current_monster.is_dead:
             self.switch_next_map()
@@ -94,3 +96,6 @@ class MapsController:
         if self.get_current_monster.is_dead:
             self.get_current_monster.prepare_for_next_spawn_after_death()
             self.get_current_map.spawn_next_monster()
+
+    def is_collide(self, mouse_pos: tuple[int, int]) -> bool:
+        return self.get_current_monster.rect.collidepoint(mouse_pos)
