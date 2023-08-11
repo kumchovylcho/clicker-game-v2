@@ -4,6 +4,7 @@ from coin_looper import CoinRotater
 from helpers import get_screen_size
 import settings
 from menu import Menu
+from player import Player
 from sound import Sound
 from map_handler.maps_controller import MapsController
 
@@ -38,7 +39,8 @@ coin_looper = CoinRotater(coin_x=10,
                           images=coin_images
                           )
 
-maps_handler = MapsController()
+player = Player()
+maps_handler = MapsController(player)
 maps_handler.add_maps()
 maps_handler.set_monsters_initial_health()
 
@@ -50,13 +52,19 @@ while game_running:
         if event.type == pg.QUIT:
             game_running = False
         elif event.type == pg.MOUSEBUTTONDOWN:
-            left_clicked = pg.mouse.get_pressed()[0]
-            if left_clicked:
+            left_click = pg.mouse.get_pressed()[0]
+            mouse_pos = pg.mouse.get_pos()
+
+            if left_click:
                 sound_button.turn_off_on()
+
+            if not maps_handler.player.is_attacking and left_click and maps_handler.is_collide(mouse_pos):
                 maps_handler.attack_monster()
+                maps_handler.player.switch_attack_state()
 
         elif event.type == pg.MOUSEBUTTONUP:
-            pass
+            if maps_handler.player.is_attacking:
+                maps_handler.player.switch_attack_state()
 
     screen.blit(background, (0, 0))
     maps_handler.display_map_with_platform_and_monster(screen)
