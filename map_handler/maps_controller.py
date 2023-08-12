@@ -1,3 +1,6 @@
+from math import ceil
+
+from collect_coins_animation import CollectCoins
 from . import helpers
 import settings
 from map_handler.map import Map
@@ -10,6 +13,8 @@ class MapsController:
         self.player = player
         self.maps = []
         self.current_map = 0
+
+        self.coin_collectors: list[CollectCoins] = []
 
     @property
     def get_current_map(self):
@@ -36,7 +41,23 @@ class MapsController:
             # dynamically getting the number of monsters on map
             for _ in range(helpers.get_number_of_monsters_on_every_map()):
                 result[i].append(initial_health)
-                initial_health = round(initial_health * settings.monster_health_scale_value)
+                initial_health = ceil(initial_health * settings.monster_health_scale_value)
+
+        return result
+
+    @staticmethod
+    def generate_initial_monster_gold_rewards():
+        initial_gold = settings.monster_initial_gold_reward
+        result = {}
+
+        # dynamically getting the number of maps
+        for i in range(len(helpers.get_all_map_names())):
+            result[i] = []
+
+            # dynamically getting the number of monsters on map
+            for _ in range(helpers.get_number_of_monsters_on_every_map()):
+                result[i].append(initial_gold)
+                initial_gold = ceil(initial_gold * settings.monster_initial_gold_reward_scale)
 
         return result
 
@@ -61,13 +82,22 @@ class MapsController:
 
             self.maps.append(new_map)
 
-    def set_monsters_initial_health(self):
+    def set_monsters_initial_health_and_gold(self):
         maps_with_monsters_health = self.generate_initial_monsters_health()
+        maps_with_monsters_gold_reward = self.generate_initial_monster_gold_rewards()
+
         for i in range(len(self.maps)):
             monsters_health = maps_with_monsters_health[i]
+            monsters_gold_reward = maps_with_monsters_gold_reward[i]
+
             for j in range(len(monsters_health)):
+                settings.last_monster_health = monsters_health[j]
+                settings.last_monster_gold_reward = monsters_gold_reward[j]
+
+                self.maps[i].monsters[j].gold_reward = monsters_gold_reward[j]
                 self.maps[i].monsters[j].health = monsters_health[j]
                 self.maps[i].monsters[j].set_max_health(monsters_health[j])
+                self.maps[i].monsters[j].gold_reward = settings.last_monster_gold_reward
 
     def switch_next_map(self):
         self.current_map += 1
@@ -88,14 +118,46 @@ class MapsController:
         screen.blit(*self.get_current_monster.prepare_text_for_display())
 
     def attack_monster(self):
-        self.get_current_monster.take_damage(self.player.click_damage)
+        #self.get_current_monster.take_damage(self.player.click_damage)
+        self.get_current_monster.take_damage(5000)
 
         if self.get_current_map.is_last_monster and self.get_current_monster.is_dead:
-            self.switch_next_map()
-
-        if self.get_current_monster.is_dead:
+            self.add_collector(self.get_current_monster.give_reward(),
+                               self.get_current_monster.monster_pos[0],
+                               self.get_current_monster.monster_pos[1],
+                               self.get_current_monster.rect.height,
+                               )
             self.get_current_monster.prepare_for_next_spawn_after_death()
             self.get_current_map.spawn_next_monster()
+            self.switch_next_map()
+
+        if not self.get_current_map.is_last_monster and self.get_current_monster.is_dead:
+            self.add_collector(self.get_current_monster.give_reward(),
+                               self.get_current_monster.monster_pos[0],
+                               self.get_current_monster.monster_pos[1],
+                               self.get_current_monster.rect.height,
+                               )
+            self.get_current_monster.prepare_for_next_spawn_after_death()
+            self.get_current_map.spawn_next_monster()
+
+    def add_collector(self, reward: int, monster_x: float, monster_y: float, monster_height: float):
+        self.coin_collectors.append(CollectCoins(gold_reward=reward,
+                                                 monster_x=monster_x,
+                                                 monster_y=monster_y,
+                                                 monster_height=monster_height,
+                                                 ))
+
+    def display_coin_animation(self, screen):
+        for collector in self.coin_collectors:
+            collector.display_coins(screen)
+            collector.drop_animation()
+            collector.collect_coins(player=self.player)
+
+        self.clear_coin_collectors()
+
+    def clear_coin_collectors(self):
+        if self.coin_collectors:
+            self.coin_collectors = [c for c in self.coin_collectors if c.coins]
 
     def is_collide(self, mouse_pos: tuple[int, int]) -> bool:
         return self.get_current_monster.rect.collidepoint(mouse_pos)
