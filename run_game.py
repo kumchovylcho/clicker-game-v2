@@ -1,18 +1,18 @@
 import pygame as pg
+from helpers import get_screen_size
+
+pg.init()
+screen = pg.display.set_mode(get_screen_size())
+
 from button import Button
 from coin_looper import CoinRotater
-from helpers import get_screen_size
 import settings
 from menu import Menu
 from player import Player
 from sound import Sound
 from map_handler.maps_controller import MapsController
 
-pg.init()
-
 pg.mouse.set_visible(False)
-
-screen = pg.display.set_mode(get_screen_size())
 
 clock = pg.time.Clock()
 
@@ -42,7 +42,7 @@ coin_looper = CoinRotater(coin_x=10,
 player = Player()
 maps_handler = MapsController(player)
 maps_handler.add_maps()
-maps_handler.set_monsters_initial_health()
+maps_handler.set_monsters_initial_health_and_gold()
 
 game_running = True
 while game_running:
@@ -68,6 +68,7 @@ while game_running:
 
     screen.blit(background, (0, 0))
     maps_handler.display_map_with_platform_and_monster(screen)
+    maps_handler.display_coin_animation(screen=screen)
 
     coin_looper.rotate_coin(screen)
 
