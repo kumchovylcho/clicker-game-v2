@@ -1,3 +1,5 @@
+from math import ceil
+
 from pygame import Surface
 
 import helpers
@@ -14,6 +16,8 @@ class Monster:
                  health: int):
         self.x_pos = x_pos
         self.y_pos = y_pos
+
+        self.gold_reward = 0
 
         self.max_health = 0
         self.health = health
@@ -46,7 +50,11 @@ class Monster:
 
     @property
     def get_new_max_health(self):
-        return round(self.max_health * settings.monster_health_scale_value)
+        return ceil(settings.last_monster_health * settings.monster_health_scale_value)
+
+    @property
+    def get_new_gold_reward(self):
+        return ceil(settings.last_monster_gold_reward * settings.monster_initial_gold_reward_scale)
 
     def create_health_surface(self) -> Surface:
         formatted_health = helpers.numbers_format(self.health)
@@ -74,7 +82,19 @@ class Monster:
 
         self.health -= amount
 
-    def prepare_for_next_spawn_after_death(self):
-        self.set_max_health(self.get_new_max_health)
+    def prepare_for_next_spawn_after_death(self, stage_cleared=True):
+        if stage_cleared:
+            new_health = self.get_new_max_health
+            new_gold = self.get_new_gold_reward
+
+            settings.last_monster_health = new_health
+            settings.last_monster_gold_reward = new_gold
+
+            self.set_max_health(new_health)
+            self.gold_reward = settings.last_monster_gold_reward
+
         self.health = self.max_health
         self.health_bar.rect.width = self.health_bar_width
+
+    def give_reward(self):
+        return self.gold_reward
