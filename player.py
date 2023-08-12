@@ -18,7 +18,7 @@ class Player:
         return helpers.create_font(f"{formatted_gold}",
                                    "Georgia",
                                    30,
-                                   (0, 0, 0)
+                                   (255, 50, 0)
                                    ).convert_alpha()
 
     def switch_attack_state(self):
