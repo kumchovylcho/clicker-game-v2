@@ -59,7 +59,7 @@ while game_running:
                 sound_button.turn_off_on()
 
             if not maps_handler.player.is_attacking and left_click and maps_handler.is_collide(mouse_pos):
-                maps_handler.attack_monster()
+                maps_handler.attack_monster(mouse_pos=mouse_pos)
                 maps_handler.player.switch_attack_state()
 
         elif event.type == pg.MOUSEBUTTONUP:
@@ -67,8 +67,9 @@ while game_running:
                 maps_handler.player.switch_attack_state()
 
     screen.blit(background, (0, 0))
-    maps_handler.display_map_with_platform_and_monster(screen)
+    maps_handler.display_map_with_platform_and_monster(screen=screen)
     maps_handler.display_coin_animation(screen=screen)
+    maps_handler.display_float_damage(screen=screen)
 
     coin_looper.rotate_coin(screen)
 
