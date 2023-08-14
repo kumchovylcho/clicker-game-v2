@@ -1,6 +1,7 @@
 from math import ceil
 
 from collect_coins_animation import CollectCoins
+from floating_damage import FloatingDamage
 from . import helpers
 import settings
 from map_handler.map import Map
@@ -15,6 +16,7 @@ class MapsController:
         self.current_map = 0
 
         self.coin_collectors: list[CollectCoins] = []
+        self.floating_damage: list[FloatingDamage] = []
 
     @property
     def get_current_map(self):
@@ -117,9 +119,14 @@ class MapsController:
 
         screen.blit(*self.get_current_monster.prepare_text_for_display())
 
-    def attack_monster(self):
+    def attack_monster(self, mouse_pos: tuple):
         #self.get_current_monster.take_damage(self.player.click_damage)
         self.get_current_monster.take_damage(5000)
+
+        self.floating_damage.append(FloatingDamage(damage=self.player.click_damage,
+                                                   mouse_x=mouse_pos[0],
+                                                   monster_y=self.get_current_monster.y_pos
+                                                   ))
 
         if self.get_current_map.is_last_monster and self.get_current_monster.is_dead:
             self.add_collector(self.get_current_monster.give_reward(),
@@ -158,6 +165,16 @@ class MapsController:
     def clear_coin_collectors(self):
         if self.coin_collectors:
             self.coin_collectors = [c for c in self.coin_collectors if c.coins]
+
+    def display_float_damage(self, screen):
+        for damage in self.floating_damage:
+            damage.float()
+            damage.display_damage(screen=screen)
+
+        self.remove_faded_damage()
+
+    def remove_faded_damage(self):
+        self.floating_damage = [d for d in self.floating_damage if not d.is_faded]
 
     def is_collide(self, mouse_pos: tuple[int, int]) -> bool:
         return self.get_current_monster.rect.collidepoint(mouse_pos)
