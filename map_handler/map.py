@@ -22,9 +22,8 @@ class Map:
             self.monsters.append(monster)
 
     def spawn_next_monster(self):
-        if not self.is_last_monster:
-            self.current_monster_index += 1
+        self.current_monster_index += 1
 
-        elif self.is_last_monster:
-            self.current_monster_index = 0
+    def reset_monster_index(self):
+        self.current_monster_index = 0
 
