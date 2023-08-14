@@ -120,7 +120,7 @@ class MapsController:
         screen.blit(*self.get_current_monster.prepare_text_for_display())
 
     def attack_monster(self, mouse_pos: tuple):
-        #self.get_current_monster.take_damage(self.player.click_damage)
+        # self.get_current_monster.take_damage(self.player.click_damage)
         self.get_current_monster.take_damage(5000)
 
         self.floating_damage.append(FloatingDamage(damage=self.player.click_damage,
@@ -128,53 +128,63 @@ class MapsController:
                                                    monster_y=self.get_current_monster.y_pos
                                                    ))
 
-        if self.get_current_map.is_last_monster and self.get_current_monster.is_dead:
-            self.add_collector(self.get_current_monster.give_reward(),
-                               self.get_current_monster.monster_pos[0],
-                               self.get_current_monster.monster_pos[1],
-                               self.get_current_monster.rect.height,
-                               )
-            self.get_current_monster.prepare_for_next_spawn_after_death()
-            self.get_current_map.spawn_next_monster()
-            self.switch_next_map()
+        if self.get_current_monster.is_dead:
+            self.coin_collectors.append(CollectCoins(gold_reward=self.get_current_monster.give_reward(),
+                                                     monster_x=self.get_current_monster.monster_pos[0],
+                                                     monster_y=self.get_current_monster.monster_pos[1],
+                                                     monster_height=self.get_current_monster.rect.height,
+                                                     ))
 
-        if not self.get_current_map.is_last_monster and self.get_current_monster.is_dead:
-            self.add_collector(self.get_current_monster.give_reward(),
-                               self.get_current_monster.monster_pos[0],
-                               self.get_current_monster.monster_pos[1],
-                               self.get_current_monster.rect.height,
-                               )
             self.get_current_monster.prepare_for_next_spawn_after_death()
-            self.get_current_map.spawn_next_monster()
 
-    def add_collector(self, reward: int, monster_x: float, monster_y: float, monster_height: float):
-        self.coin_collectors.append(CollectCoins(gold_reward=reward,
-                                                 monster_x=monster_x,
-                                                 monster_y=monster_y,
-                                                 monster_height=monster_height,
-                                                 ))
+            if self.get_current_map.is_last_monster:
+                self.get_current_map.reset_monster_index()
+                self.switch_next_map()
+
+            elif not self.get_current_map.is_last_monster:
+                self.get_current_map.spawn_next_monster()
+
+        # if self.get_current_map.is_last_monster and self.get_current_monster.is_dead:
+        #     self.add_collector(self.get_current_monster.give_reward(),
+        #                        self.get_current_monster.monster_pos[0],
+        #                        self.get_current_monster.monster_pos[1],
+        #                        self.get_current_monster.rect.height,
+        #                        )
+        #     self.get_current_monster.prepare_for_next_spawn_after_death()
+        #     self.get_current_map.spawn_next_monster()
+        #     self.switch_next_map()
+        #
+        # if not self.get_current_map.is_last_monster and self.get_current_monster.is_dead:
+        #     self.add_collector(self.get_current_monster.give_reward(),
+        #                        self.get_current_monster.monster_pos[0],
+        #                        self.get_current_monster.monster_pos[1],
+        #                        self.get_current_monster.rect.height,
+        #                        )
+        #     self.get_current_monster.prepare_for_next_spawn_after_death()
+        #     self.get_current_map.spawn_next_monster()
 
     def display_coin_animation(self, screen):
+        not_collected_coins = []
         for collector in self.coin_collectors:
             collector.display_coins(screen)
             collector.drop_animation()
             collector.collect_coins(player=self.player)
 
-        self.clear_coin_collectors()
+            if collector.coins:
+                not_collected_coins.append(collector)
 
-    def clear_coin_collectors(self):
-        if self.coin_collectors:
-            self.coin_collectors = [c for c in self.coin_collectors if c.coins]
+        self.coin_collectors = not_collected_coins
 
     def display_float_damage(self, screen):
+        not_faded_damage = []
         for damage in self.floating_damage:
             damage.float()
             damage.display_damage(screen=screen)
 
-        self.remove_faded_damage()
+            if not damage.is_faded:
+                not_faded_damage.append(damage)
 
-    def remove_faded_damage(self):
-        self.floating_damage = [d for d in self.floating_damage if not d.is_faded]
+        self.floating_damage = not_faded_damage
 
     def is_collide(self, mouse_pos: tuple[int, int]) -> bool:
         return self.get_current_monster.rect.collidepoint(mouse_pos)
