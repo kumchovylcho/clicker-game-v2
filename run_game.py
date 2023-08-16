@@ -1,5 +1,6 @@
 import pygame as pg
 from helpers import get_screen_size
+from level import LevelDisplayer
 
 pg.init()
 screen = pg.display.set_mode(get_screen_size())
@@ -57,8 +58,9 @@ coin_looper = CoinRotater(coin_x=10,
                           images=coin_images
                           )
 
+level = LevelDisplayer(x=650, y=0, width=250, height=50, color=(0, 128, 255))
 player = Player()
-maps_handler = MapsController(player)
+maps_handler = MapsController(player, level)
 maps_handler.add_maps()
 maps_handler.set_monsters_initial_health_and_gold()
 
@@ -105,6 +107,7 @@ while game_running:
     maps_handler.display_map_with_platform_and_monster(screen=screen)
     maps_handler.display_coin_animation(screen=screen)
     maps_handler.display_float_damage(screen=screen)
+    maps_handler.display_reached_level(screen=screen)
 
     coin_looper.rotate_coin(screen)
 
