@@ -10,13 +10,14 @@ from map_handler.platform import Platform
 
 class MapsController:
 
-    def __init__(self, player):
+    def __init__(self, player, level_displayer):
         self.player = player
         self.maps = []
         self.current_map = 0
 
         self.coin_collectors: list[CollectCoins] = []
         self.floating_damage: list[FloatingDamage] = []
+        self.level_displayer = level_displayer
 
     @property
     def get_current_map(self):
@@ -136,6 +137,7 @@ class MapsController:
                                                      ))
 
             self.get_current_monster.prepare_for_next_spawn_after_death()
+            self.level_displayer.increase_level()
 
             if self.get_current_map.is_last_monster:
                 self.get_current_map.reset_monster_index()
@@ -185,6 +187,9 @@ class MapsController:
                 not_faded_damage.append(damage)
 
         self.floating_damage = not_faded_damage
+
+    def display_reached_level(self, screen):
+        self.level_displayer.display_level(screen=screen)
 
     def is_collide(self, mouse_pos: tuple[int, int]) -> bool:
         return self.get_current_monster.rect.collidepoint(mouse_pos)
