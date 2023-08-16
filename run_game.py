@@ -22,10 +22,28 @@ cursor = pg.image.load("images/cursor/cursor.png").convert_alpha()
 pg.display.set_icon(cursor)
 pg.display.set_caption("Clicker Forever")
 
-quit_button = Button((100, 40, 0), (180, 180, 180), (350, 400, 220, 70))
-quit_button.default_button_construction("Quit", "Georgia", 50, (255, 255, 255), True, True)
-settings_button = Button((100, 40, 0), (180, 180, 180), (350, 250, 220, 70))
-settings_button.default_button_construction("Start", "Georgia", 50, (255, 255, 255), True, True)
+quit_button = Button((100, 0, 0), (180, 180, 180), (350, 400, 250, 90))
+quit_button.center_button(900, 800 + 150)
+quit_button.default_button_construction(
+    "Quit",
+    "Georgia",
+    50,
+    (255, 255, 255),
+    True,
+    True
+)
+settings_button = Button((0, 100, 0), (180, 180, 180), (350, 220, 250, 90))
+settings_button.center_button(900, 800 - 150)
+
+settings_button.default_button_construction(
+    "Start",
+    "Georgia",
+    50,
+    (255, 255, 255),
+    True,
+    True
+)
+
 sound_on = pg.image.load("images/sound/sound_on.png").convert_alpha()
 sound_off = pg.image.load("images/sound/sound_off.png").convert_alpha()
 sound_button = Sound(800, 700, sound_on, sound_off)
@@ -62,25 +80,38 @@ while game_running:
                 maps_handler.attack_monster(mouse_pos=mouse_pos)
                 maps_handler.player.switch_attack_state()
 
+            if menu.is_opened and settings_button.check_collision(mouse_pos):
+                menu.is_opened = False
+
+            if menu.is_opened and quit_button.check_collision(mouse_pos):
+                game_running = False
+
         elif event.type == pg.MOUSEBUTTONUP:
             if maps_handler.player.is_attacking:
                 maps_handler.player.switch_attack_state()
 
     screen.blit(background, (0, 0))
+    mouse_position = pg.mouse.get_pos()
+    sound_button.display_image(screen)
+
+    if menu.is_opened:
+        settings_button.if_the_courser_is_above_the_button(mouse_position, screen)
+        quit_button.if_the_courser_is_above_the_button(mouse_position, screen)
+        screen.blit(cursor, mouse_position)
+
+        pg.display.flip()
+        continue
+
     maps_handler.display_map_with_platform_and_monster(screen=screen)
     maps_handler.display_coin_animation(screen=screen)
     maps_handler.display_float_damage(screen=screen)
 
     coin_looper.rotate_coin(screen)
 
-    mouse_position = pg.mouse.get_pos()
-
-    settings_button.if_the_courser_is_above_the_button(mouse_position, screen)
-    quit_button.if_the_courser_is_above_the_button(mouse_position, screen)
-
-    sound_button.display_image(screen)
+    sound_button.display_image(screen)  # bug sled kato igrata startira butona izchezva
 
     screen.blit(cursor, mouse_position)
+
     pg.display.update()
 
 pg.quit()
