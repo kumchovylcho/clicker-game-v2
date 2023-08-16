@@ -1,0 +1,2 @@
+class ClickPowerUp:
+    pass
