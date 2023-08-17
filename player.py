@@ -5,7 +5,7 @@ class Player:
 
     def __init__(self):
         self.is_attacking = False
-        self.click_damage = 1
+        self.click_damage = 5000
         self.gold = 0
         self.gold_surface = self.create_gold_surface()
 
