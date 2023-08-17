@@ -1,4 +1,6 @@
 import pygame as pg
+
+from companion import Companion
 from helpers import get_screen_size
 from level import LevelDisplayer
 from shop_in_game import Shop
@@ -59,9 +61,16 @@ coin_looper = CoinRotater(coin_x=10,
                           images=coin_images
                           )
 
+bird_images = [pg.image.load(f"images/companions/bird/bird{i}.png").convert_alpha() for i in range(1, 14)]
+fireball_images = [pg.image.load(f"images/fireball/fb{i}.png").convert_alpha() for i in range(6)]
+bird = Companion(bird_images=bird_images,
+                 fireball_images=fireball_images,
+                 damage=10,
+                 )
+
 level = LevelDisplayer(x=650, y=0, width=250, height=50, color=(0, 128, 255))
 player = Player()
-maps_handler = MapsController(player, level)
+maps_handler = MapsController(player, level, bird)
 maps_handler.add_maps()
 maps_handler.set_monsters_initial_health_and_gold()
 
@@ -82,7 +91,7 @@ while game_running:
                 sound_button.turn_off_on()
 
             if not maps_handler.player.is_attacking and left_click and maps_handler.is_collide(mouse_pos):
-                maps_handler.attack_monster(mouse_pos=mouse_pos)
+                maps_handler.attack_monster(mouse_pos=mouse_pos, player_dmg=True)
                 maps_handler.player.switch_attack_state()
 
             if menu.is_opened and settings_button.check_collision(mouse_pos):
@@ -100,6 +109,8 @@ while game_running:
                 if shop.check_for_collide(mouse_pos, 100, 450, 100, 50):
                     player.reduce_gold(shop.auto_clicker_price)
                     shop.auto_clicker_price += 500
+
+            # TODO: set 'maps_handler.bird_spawned = True' when the player has gold to buy the companion
 
         elif event.type == pg.MOUSEBUTTONUP:
             if maps_handler.player.is_attacking:
@@ -121,6 +132,7 @@ while game_running:
     maps_handler.display_coin_animation(screen=screen)
     maps_handler.display_float_damage(screen=screen)
     maps_handler.display_reached_level(screen=screen)
+    maps_handler.render_bird(screen=screen, mouse_pos=mouse_position)
 
     coin_looper.rotate_coin(screen)
 
