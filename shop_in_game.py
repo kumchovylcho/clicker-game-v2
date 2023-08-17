@@ -18,7 +18,7 @@ class Shop:
         screen.blit(fnt, (x, y))
 
     def draw_button(self, screen, x, y, width, height, text):
-        pygame.draw.rect(screen, (255, 0, 0), (x, y, width, height))
+        pygame.draw.rect(screen, (255, 0, 0), (x, y, width, height), border_radius=10)
         fnt = create_font(text, "Georgia", 20, (0, 0, 0), True)
 
         text_width, text_height = fnt.get_size()
@@ -27,8 +27,9 @@ class Shop:
 
         screen.blit(fnt, (text_x, text_y))
 
-    def check_for_collide(self, mouse_pos):
-        return self.rect.collidepoint(mouse_pos)
+    def check_for_collide(self, mouse_pos, x, y, width, height):
+        rect = pygame.Rect(x, y, width, height)
+        return rect.collidepoint(mouse_pos)
 
     def check_coins(self):
         pass
