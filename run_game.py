@@ -1,6 +1,7 @@
 import pygame as pg
 from helpers import get_screen_size
 from level import LevelDisplayer
+from shop_in_game import Shop
 
 pg.init()
 screen = pg.display.set_mode(get_screen_size())
@@ -64,6 +65,8 @@ maps_handler = MapsController(player, level)
 maps_handler.add_maps()
 maps_handler.set_monsters_initial_health_and_gold()
 
+shop = Shop()
+
 game_running = True
 while game_running:
     clock.tick(settings.GAME_FPS)
@@ -87,6 +90,12 @@ while game_running:
 
             if menu.is_opened and quit_button.check_collision(mouse_pos):
                 game_running = False
+
+            if shop.check_for_collide(mouse_pos, 100, 300, 100, 50):
+                print('Increase click damage')
+
+            if shop.check_for_collide(mouse_pos, 100, 450, 100, 50):
+                print('Auto clicker')
 
         elif event.type == pg.MOUSEBUTTONUP:
             if maps_handler.player.is_attacking:
@@ -112,6 +121,16 @@ while game_running:
     coin_looper.rotate_coin(screen)
 
     sound_button.display_image(screen)  # bug sled kato igrata startira butona izchezva
+
+    shop.draw_background(screen)
+
+    shop.draw_text(screen, 40, 260,
+                   "Increase click damage")
+    shop.draw_button(screen, 100, 300, 100, 50, "???")
+
+    shop.draw_text(screen, 85, 410,
+                   "Auto clicker")
+    shop.draw_button(screen, 100, 450, 100, 50, "???")
 
     screen.blit(cursor, mouse_position)
 
