@@ -34,3 +34,7 @@ class Player:
 
     def increase_click_damage(self):
         self.click_damage += 1
+
+    def reduce_gold(self, amount: float):
+        self.gold -= amount
+        self.gold_surface = self.create_gold_surface()

@@ -91,11 +91,15 @@ while game_running:
             if menu.is_opened and quit_button.check_collision(mouse_pos):
                 game_running = False
 
-            if shop.check_for_collide(mouse_pos, 100, 300, 100, 50):
-                print('Increase click damage')
+            if shop.can_update_click_power:
+                if shop.check_for_collide(mouse_pos, 100, 300, 100, 50):
+                    player.reduce_gold(shop.click_power_price)
+                    shop.click_power_price += 50
 
-            if shop.check_for_collide(mouse_pos, 100, 450, 100, 50):
-                print('Auto clicker')
+            if shop.can_purchase_auto_clicker:
+                if shop.check_for_collide(mouse_pos, 100, 450, 100, 50):
+                    player.reduce_gold(shop.auto_clicker_price)
+                    shop.auto_clicker_price += 500
 
         elif event.type == pg.MOUSEBUTTONUP:
             if maps_handler.player.is_attacking:
@@ -122,15 +126,23 @@ while game_running:
 
     sound_button.display_image(screen)  # bug sled kato igrata startira butona izchezva
 
+    shop.player_gold = player.gold
+
     shop.draw_background(screen)
 
     shop.draw_text(screen, 40, 260,
-                   "Increase click damage")
-    shop.draw_button(screen, 100, 300, 100, 50, "???")
+                   f"Increase click damage DAMAGE LEVEL")
+
+    shop.draw_button(screen, 100, 300, 100, 50,
+                     f"{shop.click_power_price} coins", 100)
 
     shop.draw_text(screen, 85, 410,
-                   "Auto clicker")
-    shop.draw_button(screen, 100, 450, 100, 50, "???")
+                   "Auto clicker LEVEL")
+    shop.draw_button(screen, 100, 450, 100, 50,
+                     f"{shop.auto_clicker_price} coins", 500)
+
+    shop.check_coins_for_click_power_update(player.gold)
+    shop.check_coins_for_auto_clicker_purchase(player.gold)
 
     screen.blit(cursor, mouse_position)
 
