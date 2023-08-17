@@ -168,25 +168,6 @@ class MapsController:
             elif not self.get_current_map.is_last_monster:
                 self.get_current_map.spawn_next_monster()
 
-        # if self.get_current_map.is_last_monster and self.get_current_monster.is_dead:
-        #     self.add_collector(self.get_current_monster.give_reward(),
-        #                        self.get_current_monster.monster_pos[0],
-        #                        self.get_current_monster.monster_pos[1],
-        #                        self.get_current_monster.rect.height,
-        #                        )
-        #     self.get_current_monster.prepare_for_next_spawn_after_death()
-        #     self.get_current_map.spawn_next_monster()
-        #     self.switch_next_map()
-        #
-        # if not self.get_current_map.is_last_monster and self.get_current_monster.is_dead:
-        #     self.add_collector(self.get_current_monster.give_reward(),
-        #                        self.get_current_monster.monster_pos[0],
-        #                        self.get_current_monster.monster_pos[1],
-        #                        self.get_current_monster.rect.height,
-        #                        )
-        #     self.get_current_monster.prepare_for_next_spawn_after_death()
-        #     self.get_current_map.spawn_next_monster()
-
     def display_coin_animation(self, screen):
         not_collected_coins = []
         for collector in self.coin_collectors:
