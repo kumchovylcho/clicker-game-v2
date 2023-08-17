@@ -10,7 +10,7 @@ from map_handler.platform import Platform
 
 class MapsController:
 
-    def __init__(self, player, level_displayer):
+    def __init__(self, player, level_displayer, bird):
         self.player = player
         self.maps = []
         self.current_map = 0
@@ -18,6 +18,9 @@ class MapsController:
         self.coin_collectors: list[CollectCoins] = []
         self.floating_damage: list[FloatingDamage] = []
         self.level_displayer = level_displayer
+
+        self.bird = bird
+        self.bird_spawned = False
 
     @property
     def get_current_map(self):
@@ -120,14 +123,33 @@ class MapsController:
 
         screen.blit(*self.get_current_monster.prepare_text_for_display())
 
-    def attack_monster(self, mouse_pos: tuple):
-        # self.get_current_monster.take_damage(self.player.click_damage)
-        self.get_current_monster.take_damage(5000)
+    def render_bird(self, screen, mouse_pos: tuple):
+        if not self.bird_spawned:
+            return
 
-        self.floating_damage.append(FloatingDamage(damage=self.player.click_damage,
-                                                   mouse_x=mouse_pos[0],
-                                                   monster_y=self.get_current_monster.y_pos
-                                                   ))
+        self.bird.render(screen=screen)
+
+        if self.bird.fireball_reached():
+            self.attack_monster(mouse_pos=mouse_pos,
+                                companion_dmg=self.bird.damage
+                                )
+            self.bird.set_cooldown()
+            self.bird.reset_fireball()
+
+    def attack_monster(self, mouse_pos: tuple, companion_dmg=None, player_dmg=False):
+        if companion_dmg:
+            self.get_current_monster.take_damage(self.bird.damage)
+            self.floating_damage.append(FloatingDamage(damage=self.bird.damage,
+                                                       mouse_x=650,
+                                                       monster_y=self.get_current_monster.y_pos
+                                                       ))
+
+        if player_dmg:
+            self.get_current_monster.take_damage(self.player.click_damage)
+            self.floating_damage.append(FloatingDamage(damage=self.player.click_damage,
+                                                       mouse_x=mouse_pos[0],
+                                                       monster_y=self.get_current_monster.y_pos
+                                                       ))
 
         if self.get_current_monster.is_dead:
             self.coin_collectors.append(CollectCoins(gold_reward=self.get_current_monster.give_reward(),
