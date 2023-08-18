@@ -101,16 +101,24 @@ while game_running:
                 game_running = False
 
             if shop.can_update_click_power:
-                if shop.check_for_collide(mouse_pos, 100, 300, 100, 50):
+                if shop.check_for_collide(mouse_pos, 75, 300, 200, 70):
                     player.reduce_gold(shop.click_power_price)
-                    shop.click_power_price += 50
+                    player.increase_click_damage()
+                    shop.increase_click_price()
 
-            if shop.can_purchase_auto_clicker:
-                if shop.check_for_collide(mouse_pos, 100, 450, 100, 50):
-                    player.reduce_gold(shop.auto_clicker_price)
-                    shop.auto_clicker_price += 500
+                    shop.click_power_level += 1
 
-            # TODO: set 'maps_handler.bird_spawned = True' when the player has gold to buy the companion
+            if shop.can_purchase_companion:
+                if shop.check_for_collide(mouse_pos, 75, 500, 200, 70):
+                    player.reduce_gold(shop.companion_price)
+                    shop.is_companion_bought = True
+                    shop.increase_companion_price()
+                    maps_handler.bird_spawned = True
+                    shop.companion_level += 1
+                    if shop.first_time_bought:
+                        shop.first_time_bought = False
+                    else:
+                        maps_handler.bird.increase_damage(100)
 
         elif event.type == pg.MOUSEBUTTONUP:
             if maps_handler.player.is_attacking:
@@ -143,18 +151,27 @@ while game_running:
     shop.draw_background(screen)
 
     shop.draw_text(screen, 40, 260,
-                   f"Increase click damage DAMAGE LEVEL")
+                   f"Increase click damage X{shop.click_power_level}")
 
-    shop.draw_button(screen, 100, 300, 100, 50,
-                     f"{shop.click_power_price} coins", 100)
+    shop.draw_button(screen, 75, 300, 200, 70,
+                     f"coins: ",
+                     shop.click_power_price)
 
-    shop.draw_text(screen, 85, 410,
-                   "Auto clicker LEVEL")
-    shop.draw_button(screen, 100, 450, 100, 50,
-                     f"{shop.auto_clicker_price} coins", 500)
+    if not shop.is_companion_bought:
+        shop.draw_text(screen, 85, 460,
+                       "Buy companion")
+    else:
+        shop.draw_text(screen, 80, 460,
+                       "Companion update")
+    shop.draw_button(screen, 75, 500, 200, 70,
+                     f"coins: ",
+                     shop.companion_price)
+
+    if shop.companion_level > 0:
+        shop.draw_text_companion(screen, 35, 700, f"Companion Level: {shop.companion_level}")
 
     shop.check_coins_for_click_power_update(player.gold)
-    shop.check_coins_for_auto_clicker_purchase(player.gold)
+    shop.check_coins_for_companion(player.gold)
 
     screen.blit(cursor, mouse_position)
 
