@@ -10,7 +10,7 @@ class Shop:
         self.click_power_price = 1
         self.click_power_level = 1
 
-        self.companion_price = 0
+        self.companion_price = 1000
         self.is_companion_bought = False
 
         self.can_update_click_power = False
@@ -19,16 +19,19 @@ class Shop:
 
         self.companion_level = 0
 
-    def draw_background(self, screen):
+    @staticmethod
+    def draw_background(screen):
         overlay = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
         pygame.draw.rect(overlay, (0, 0, 0, 100), (0, 200, 350, 600), border_radius=15)
         screen.blit(overlay, (0, 0))
 
-    def draw_text(self, screen, x, y, text, color=(255, 255, 255)):
+    @staticmethod
+    def draw_text(screen, x, y, text, color=(255, 255, 255)):
         fnt = create_font(text, "Georgia", 20, color, True)
         screen.blit(fnt, (x, y))
 
-    def draw_text_companion(self, screen, x, y, text, color=(255, 255, 255)):
+    @staticmethod
+    def draw_text_companion(screen, x, y, text, color=(255, 255, 255)):
         fnt = create_font(text, "Georgia", 27, color, True)
         screen.blit(fnt, (x, y))
 
@@ -49,7 +52,8 @@ class Shop:
 
         screen.blit(fnt, (text_x, text_y))
 
-    def check_for_collide(self, mouse_pos, x, y, width, height):
+    @staticmethod
+    def check_for_collide(mouse_pos, x, y, width, height):
         rect = pygame.Rect(x, y, width, height)
         return rect.collidepoint(mouse_pos)
 
