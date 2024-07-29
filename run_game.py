@@ -4,6 +4,7 @@ from companion import Companion
 from helpers import get_screen_size
 from level import LevelDisplayer
 from shop_in_game import Shop
+from text import Text
 
 pg.init()
 screen = pg.display.set_mode(get_screen_size())
@@ -75,6 +76,38 @@ maps_handler.add_maps()
 maps_handler.set_monsters_initial_health_and_gold()
 
 shop = Shop()
+shop.add_texts([
+    Text(
+        settings.MENU_INCREASE_DAMAGE_TEXT_POSITION[1],
+        f"{settings.MENU_INCREASE_DAMAGE_TEXT}1",
+        settings.MENU_INCREASE_DAMAGE_TEXT_FONT,
+        settings.MENU_INCREASE_DAMAGE_TEXT_FONT_SIZE,
+        settings.MENU_INCREASE_DAMAGE_TEXT_COLOR,
+        settings.MENU_OVERLAY_WIDTH,
+        settings.MENU_OVERLAY_POSITION[0],
+        settings.MENU_DAMAGE_TEXT_ID
+    ),
+    Text(
+        settings.MENU_COMPANION_TEXT_POSITION[1],
+        settings.MENU_COMPANION_TEXT,
+        settings.MENU_COMPANION_TEXT_FONT,
+        settings.MENU_COMPANION_TEXT_FONT_SIZE,
+        settings.MENU_COMPANION_TEXT_COLOR,
+        settings.MENU_OVERLAY_WIDTH,
+        settings.MENU_OVERLAY_POSITION[0],
+        settings.MENU_COMPANION_TEXT_ID
+    ),
+    Text(
+        settings.MENU_COMPANION_LEVEL_TEXT_POSITION[1],
+        settings.MENU_COMPANION_LEVEL_TEXT,
+        settings.MENU_COMPANION_LEVEL_TEXT_FONT,
+        settings.MENU_COMPANION_LEVEL_TEXT_FONT_SIZE,
+        settings.MENU_COMPANION_LEVEL_TEXT_COLOR,
+        settings.MENU_OVERLAY_WIDTH,
+        settings.MENU_OVERLAY_POSITION[0],
+        settings.MENU_COMPANION_LEVEL_TEXT_ID
+    )
+])
 
 game_running = True
 while game_running:
@@ -106,15 +139,12 @@ while game_running:
                     player.increase_click_damage()
                     shop.increase_click_price()
 
-                    shop.click_power_level += 1
-
             if shop.can_purchase_companion:
                 if shop.check_for_collide(mouse_pos, 75, 500, 200, 70):
                     player.reduce_gold(shop.companion_price)
                     shop.is_companion_bought = True
                     shop.increase_companion_price()
                     maps_handler.bird_spawned = True
-                    shop.companion_level += 1
                     if shop.first_time_bought:
                         shop.first_time_bought = False
                     else:
@@ -144,31 +174,20 @@ while game_running:
 
     coin_looper.rotate_coin(screen)
 
-    sound_button.display_image(screen)  # bug sled kato igrata startira butona izchezva
+    sound_button.display_image(screen)
 
     shop.player_gold = player.gold
 
-    shop.draw_background(screen)
-
-    shop.draw_text(screen, 40, 260,
-                   f"Increase click damage X{shop.click_power_level}")
+    shop.render_overlay(screen)
+    shop.render_texts(screen)
 
     shop.draw_button(screen, 75, 300, 200, 70,
                      f"coins: ",
                      shop.click_power_price)
 
-    if not shop.is_companion_bought:
-        shop.draw_text(screen, 85, 460,
-                       "Buy companion")
-    else:
-        shop.draw_text(screen, 80, 460,
-                       "Companion update")
     shop.draw_button(screen, 75, 500, 200, 70,
                      f"coins: ",
                      shop.companion_price)
-
-    if shop.companion_level > 0:
-        shop.draw_text_companion(screen, 35, 700, f"Companion Level: {shop.companion_level}")
 
     shop.check_coins_for_click_power_update(player.gold)
     shop.check_coins_for_companion(player.gold)
