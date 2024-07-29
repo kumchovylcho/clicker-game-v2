@@ -1,17 +1,16 @@
 import pygame as pg
 
 from companion import Companion
-from helpers import get_screen_size
 from level import LevelDisplayer
 from shop_in_game import Shop
 from text import Text
+import settings
 
 pg.init()
-screen = pg.display.set_mode(get_screen_size())
+screen = pg.display.set_mode(settings.SCREEN_SIZE)
 
 from button import Button
 from coin_looper import CoinRotater
-import settings
 from menu import Menu
 from player import Player
 from sound import Sound
