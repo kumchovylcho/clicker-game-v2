@@ -24,7 +24,3 @@ def calculate_center(main_obj_width, child_obj_width):
     middle_of_child_obj = child_obj_width // 2
 
     return middle_of_main_obj - middle_of_child_obj
-
-
-def get_screen_size():
-    return 900, 800
