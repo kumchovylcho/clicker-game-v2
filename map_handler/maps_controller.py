@@ -183,8 +183,7 @@ class MapsController:
     def display_float_damage(self, screen):
         not_faded_damage = []
         for damage in self.floating_damage:
-            damage.float()
-            damage.display_damage(screen=screen)
+            damage.render(screen)
 
             if not damage.is_faded:
                 not_faded_damage.append(damage)
