@@ -49,3 +49,7 @@ class FloatingDamage:
     def display_damage(self, screen):
         screen.blit(self.damage_shadow, self.shadow_offset_position)
         screen.blit(self.damage_surface, self.damage_position)
+
+    def render(self, screen):
+        self.float()
+        self.display_damage(screen)
