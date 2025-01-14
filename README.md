@@ -24,6 +24,6 @@
 
 
 # Contributors:
-  1. [Petko](https://github.com/petko940)
+  1. [Petko](https://github.com/petko-todorov)
   2. [Tamer](https://github.com/kumchovylcho)
   3. [Alexander](https://github.com/AlexanderBedrosyan)
